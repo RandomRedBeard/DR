@@ -411,6 +411,10 @@ int dr_map_check_move(const dr_map_t *m, const dr_point2d_t dest) {
          strchr(WALKABLE, *(m->map_buf + index));
 }
 
+const dr_room_t* dr_map_rand_room(dr_map_t* map) {
+  return cosmic_list_get_tt(map->room_list, rand() %  cosmic_list_size(map->room_list), dr_room_t*);
+}
+
 int dr_find_path(const dr_map_t *m, cosmic_list_t *l, dr_point2d_t src,
                  dr_point2d_t dest) {
   int len = m->width * m->height;

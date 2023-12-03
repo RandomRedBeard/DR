@@ -13,6 +13,8 @@ typedef struct {
     cosmic_list_t* curpath;
 } dr_monster_t;
 
+dr_monster_t* dr_monster_new();
+
 #ifdef __cplusplus
 }
 #endif

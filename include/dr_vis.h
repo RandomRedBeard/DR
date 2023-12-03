@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-typedef struct dr_vis {
+typedef struct {
   dr_rect2d_t camera;
   double blockw, blockh;
   int camera_lock;
