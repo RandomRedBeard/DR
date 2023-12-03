@@ -11,9 +11,7 @@ set(MEMORYCHECK_COMMAND_OPTIONS "--leak-check=full --show-leak-kinds=all")
 
 # find_package(SDL)
 find_package(cosmic REQUIRED)
-
 set(DR_LINKS ${DR_LINKS} cosmic)
-# include_directories("${cosmic_INCLUDE_DIRS}")
 
 if (MSVC)
     # add_compile_options(/W4 /WX)
@@ -21,12 +19,12 @@ if (MSVC)
     set(DR_LINKS ${DR_LINKS} "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\pdcurses.lib")
 else()
     add_definitions(-D_POSIX_C_SOURCE)
-    add_compile_options(-Wall -Wextra -pedantic -Werror -ansi)
+    # add_compile_options(-Wall -Wextra -pedantic -Werror -ansi)
     set(DR_LINKS ${DR_LINKS} curses)
 endif()
 
 if (NOT MSVC)
-    set(DR_LINKS m)
+    set(DR_LINKS ${DR_LINKS} m)
 endif()
 
 # if (SDL_LIBRARY)
