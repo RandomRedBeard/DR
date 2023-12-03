@@ -10,6 +10,7 @@ dr_game_t *dr_game_new(unsigned int w, unsigned int h, unsigned int n, unsigned 
     game->mcnt = mcnt;
     game->player = player;
     game->level = NULL;
+    return game;
 }
 
 void dr_game_next_level(dr_game_t *game)

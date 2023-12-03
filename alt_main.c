@@ -5,6 +5,7 @@
 #include <dr_player.h>
 #include <dr_level.h>
 #include <dr_game.h>
+#include <dr_item.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -56,17 +57,43 @@ void draw_monsters(dr_level_t *level)
   }
 }
 
+void draw_items(dr_level_t *level)
+{
+  int len = cosmic_list_size(level->item_list);
+  for (int i = 0; i < len; i++)
+  {
+    dr_item_t *item = cosmic_list_get_tt(level->item_list, i, dr_item_t *);
+    mvaddch(item->pt.y, item->pt.x, item->icon);
+  }
+}
+
+void draw_inventory(dr_player_t *player)
+{
+  clear();
+  dr_item_t *item = NULL;
+  int len = cosmic_list_size(player->inventory);
+  for (int i = 0; i < len; i++)
+  {
+    item = cosmic_list_get_tt(player->inventory, i, dr_item_t *);
+    // display item
+    mvprintw(i, 0, "%d - %s", i, item->name);
+  }
+  refresh();
+}
+
 int main()
 {
   srand(time(0));
-  dr_player_t player;
+  dr_player_t* player = dr_player_new();
   dr_point2d_t dest, mv;
-  dr_game_t *game = dr_game_new(80, 20, 3, 3, 5, &player);
+  dr_game_t *game = dr_game_new(80, 20, 3, 3, 0, player);
   int xdir, ydir;
   int camera_drag = 0;
   cosmic_list_t *path = cosmic_vector_new(10);
   int c;
   MEVENT event;
+
+  dr_item_t item;
 
   initscr();
   clear();
@@ -77,16 +104,24 @@ int main()
 
   dr_game_next_level(game);
 
+  dr_level_rand_point(game->level, &item.pt);
+  item.icon = '/';
+  item.name = "Some Item";
+  item.type = DR_ITEM_TYPE_WEAPON;
+
+  cosmic_list_add(game->level->item_list, COSMIC_ANY(&item));
+
   do
   {
     xdir = ydir = 0;
     render_map(game->level->map);
-    draw_person(player.pt);
+    draw_items(game->level);
+    draw_person(player->pt);
     draw_monsters(game->level);
     draw_path(game->level->map, path);
     refresh();
 
-    c = mvgetch(player.pt.y, player.pt.x);
+    c = mvgetch(player->pt.y, player->pt.x);
     switch (c)
     {
     case KEY_MOUSE:
@@ -96,7 +131,7 @@ int main()
         {
           dr_point2d_set(&dest, event.x, event.y);
           mvprintw(game->level->map->height + 1, 0, "Mouse");
-          dr_game_init_path(game, player.pt, &path, dest);
+          dr_game_init_path(game, player->pt, &path, dest);
           mvprintw(game->level->map->height + 2, 0, "After");
         }
       }
@@ -130,6 +165,27 @@ int main()
       continue;
     }
 
+    if (c == 'i')
+    {
+      draw_inventory(player);
+      getch();
+      continue;
+    }
+
+    if (c == ' ')
+    {
+      dr_item_t *item = dr_level_pickup_item(game->level, player->pt);
+      if (!item)
+      {
+        mvprintw(game->level->map->height + 3, 0, "No Item There");
+      }
+      else
+      {
+        mvprintw(game->level->map->height + 3, 0, "You picked up %s", item->name);
+        cosmic_list_add(player->inventory, COSMIC_ANY(item));
+      }
+    }
+
     dr_game_move_monsters(game);
 
     if (xdir == 0 && ydir == 0)
@@ -137,11 +193,11 @@ int main()
       continue;
     }
 
-    dr_point2d_set(&mv, player.pt.x + xdir, player.pt.y + ydir);
+    dr_point2d_set(&mv, player->pt.x + xdir, player->pt.y + ydir);
     if (dr_level_check_move(game->level, mv))
     {
-      player.pt.x += xdir;
-      player.pt.y += ydir;
+      player->pt.x += xdir;
+      player->pt.y += ydir;
     }
 
     dr_game_set_monsters_path(game);
@@ -150,6 +206,7 @@ int main()
 
   endwin();
   dr_game_free(game);
+  dr_player_free(player);
 
   return 0;
 }

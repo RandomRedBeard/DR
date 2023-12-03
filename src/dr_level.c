@@ -25,6 +25,26 @@ void dr_level_init_monster(dr_level_t* level, dr_monster_t* monster) {
   dr_level_rand_point(level, &monster->pt);
 }
 
+dr_item_t* dr_level_pickup_item(dr_level_t* level, dr_point2d_t pt) {
+    int len = cosmic_list_size(level->item_list);
+    int i = 0;
+    dr_item_t* item = NULL;
+    for (int i = 0; i < len; i++) {
+        item = cosmic_list_get_tt(level->item_list, i, dr_item_t*);
+        if (dr_point2d_eq(item->pt, pt)) {
+            break;
+        }
+    }
+
+    if (i != len) {
+        cosmic_list_remove(level->item_list, i, PCOSMIC_ANY(&item));
+    } else {
+        item = NULL;
+    }
+
+    return item;
+}
+
 dr_level_t* dr_level_new(unsigned int w, unsigned int h, unsigned int n,
     unsigned int m, unsigned int mcnt) {
     dr_level_t* level = malloc(sizeof(dr_level_t));
@@ -35,6 +55,9 @@ dr_level_t* dr_level_new(unsigned int w, unsigned int h, unsigned int n,
         dr_level_init_monster(level, monster);
         cosmic_list_add(level->monster_list, COSMIC_ANY(monster));
     }
+    
+    // Initialize empty item list
+    level->item_list = cosmic_vector_new(10);
 
     return level;
 }
