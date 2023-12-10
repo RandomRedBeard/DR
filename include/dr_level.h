@@ -24,7 +24,7 @@ int dr_level_check_move(dr_level_t *, dr_point2d_t);
 dr_item_t *dr_level_pickup_item(dr_level_t *, dr_point2d_t);
 
 void dr_level_move_monsters(dr_level_t *);
-int dr_level_attack_monster(dr_level_t *, dr_monster_t *, dr_dmg_t);
+int dr_level_attack_monster(dr_level_t *, dr_monster_t **, dr_dmg_t);
 void dr_level_init_path(dr_level_t *, dr_point2d_t, cosmic_list_t **,
                         dr_point2d_t);
 void dr_level_set_monsters_path(dr_level_t *);
