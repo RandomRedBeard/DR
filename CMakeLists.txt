@@ -15,7 +15,8 @@ set(DR_LINKS ${DR_LINKS} cosmic)
 
 if (MSVC)
     # add_compile_options(/W4 /WX)
-    include_directories("tmpinclude")
+    include_directories("${CMAKE_CURRENT_SOURCE_DIR}\\external")
+    # static lib
     set(DR_LINKS ${DR_LINKS} "${CMAKE_CURRENT_SOURCE_DIR}\\lib\\pdcurses.lib")
 else()
     add_definitions(-D_POSIX_C_SOURCE)
@@ -36,12 +37,18 @@ endif()
 #     set(DR_LINKS ${DR_LINKS} ${SDL_MAIN_LIBRARY})
 # endif()
 
-include_directories(include)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-file(GLOB DR_SOURCE src/*.c alt_main.c)
+file(GLOB DR_SOURCE src/*.c)
 
 # add_executable(main WIN32 ${DR_SOURCE})
-add_executable(main ${DR_SOURCE})
+add_executable(main ${DR_SOURCE} alt_main.c)
 target_link_libraries(main ${DR_LINKS})
 
-
+file(GLOB files tests/*.c)
+foreach(file ${files})
+    get_filename_component(tname ${file} NAME_WLE)
+    add_executable(${tname} ${file} ${DR_SOURCE})
+    target_link_libraries(${tname} ${DR_LINKS})
+    add_test(NAME ${tname} COMMAND ${tname})
+endforeach()

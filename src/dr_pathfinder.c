@@ -15,7 +15,7 @@ int dr_pathfinder_uw(int *pred, int *nodes, unsigned int len, unsigned int src,
   CLONG l = 0;
   int n;
   int found = -1;
-  char *visited = alloca(vlen);
+  char *visited = malloc(vlen);
   cosmic_list_t *queue = cosmic_vector_new(10);
 
   memset(visited, 0, vlen);
@@ -47,6 +47,7 @@ int dr_pathfinder_uw(int *pred, int *nodes, unsigned int len, unsigned int src,
   }
 
   cosmic_vector_free(queue, NULL);
+  free(visited);
 
   return found;
 }

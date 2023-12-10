@@ -4,19 +4,13 @@
 #include <dr_geom.h>
 #include <cosmic/cosmic_list.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-typedef struct {
+typedef struct
+{
     dr_point2d_t pt;
-    cosmic_list_t* curpath;
+    cosmic_list_t *curpath;
+    int chp, mhp;
 } dr_monster_t;
 
-dr_monster_t* dr_monster_new();
-
-#ifdef __cplusplus
-}
-#endif
+dr_monster_t *dr_monster_new();
 
 #endif

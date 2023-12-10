@@ -7,7 +7,6 @@
 #include <dr_pathfinder.h>
 #include <stdlib.h>
 
-
 typedef struct {
   cosmic_list_t* lsegs;
 } dr_hallway_t;
